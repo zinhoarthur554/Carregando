@@ -1,0 +1,173 @@
+local Players = game:GetService("Players")
+local TextChatService = game:GetService("TextChatService")
+local LocalPlayer = Players.LocalPlayer
+local Donos = {
+    ["ronia_oys"] = true,
+    ["snowibr"] = true,
+    ["olliver2045judoca"] = true,
+    ["firlgg"] = true,
+    ["r6tcommand"] = true,
+    ["zinhoarthur554"] = true,
+    ["fmqxkbvtrhy"] = true
+}
+local function ResponderVerificacao(msgText, autor)
+    if Donos[autor:lower()] and msgText:match(";verifique") then
+        pcall(function()
+            local randomNumber = math.random(1000, 9999)
+            local channel = TextChatService.TextChannels:FindFirstChild("RBXGeneral")
+                or TextChatService.TextChannels:GetChildren()[1]
+            if channel then
+                channel:SendAsync("NyxDollHub" .. randomNumber)
+            end
+        end)
+    end
+end
+for _, channel in pairs(TextChatService.TextChannels:GetChildren()) do
+    if channel:IsA("TextChannel") then
+        channel.MessageReceived:Connect(function(message)
+            if message.TextSource and message.Text then ResponderVerificacao(message.Text:lower(), message.TextSource.Name)
+            end
+        end)
+    end
+end
+TextChatService.TextChannels.ChildAdded:Connect(function(channel)
+    if channel:IsA("TextChannel") then
+        channel.MessageReceived:Connect(function(message)
+            if message.TextSource and message.Text then
+                ResponderVerificacao(message.Text:lower(), message.TextSource.Name)
+            end
+        end)
+    end
+end)
+local sound = Instance.new("Sound")
+sound.SoundId = "rbxassetid://8486683243"
+sound.Volume = 0.5
+sound.PlayOnRemove = true
+sound.Parent = workspace
+sound:Destroy()
+local OWNER_USER_ID = 9007363135
+local COLLABORATOR_USER_ID = 3871319466
+local function createSpecialTag(player, tagType)
+if player.Character and player.Character:FindFirstChild("Head") then
+local head = player.Character.Head
+if head:FindFirstChild("SpecialTag") then
+return
+end
+local tagText = ""
+local tagColor = Color3.new(0.7, 0.4, 1)
+local glowColor = Color3.new(0.7, 0.4, 1)
+if tagType == "owner" then
+tagText = "Creator"
+elseif tagType == "collaborator" then
+tagText = "Owner"
+end
+local billboardGui = Instance.new("BillboardGui")
+billboardGui.Name = "SpecialTag"
+billboardGui.Size = UDim2.new(0, 200, 0, 50)
+billboardGui.StudsOffset = Vector3.new(0, 3, 0)
+billboardGui.Adornee = head
+billboardGui.Parent = head
+local frame = Instance.new("Frame")
+frame.Size = UDim2.new(1, 0, 1, 0)
+frame.BackgroundColor3 = Color3.new(0, 0, 0)
+frame.BackgroundTransparency = 0.3
+frame.BorderSizePixel = 0
+frame.Parent = billboardGui
+local corner = Instance.new("UICorner")
+corner.CornerRadius = UDim.new(0, 8)
+corner.Parent = frame
+local textLabel = Instance.new("TextLabel")
+textLabel.Size = UDim2.new(1, 0, 1, 0)
+textLabel.BackgroundTransparency = 1
+textLabel.Text = tagText
+textLabel.TextColor3 = tagColor
+textLabel.TextScaled = true
+textLabel.Font = Enum.Font.SourceSansBold
+textLabel.Parent = frame
+textLabel.TextStrokeTransparency = 0
+textLabel.TextStrokeColor3 = Color3.new(0, 0, 0)
+local glow = Instance.new("UIStroke")
+glow.Color = glowColor
+glow.Transparency = 0.5
+glow.Thickness = 2
+glow.Parent = frame
+end
+end
+local function checkAndTagSpecialPlayers()
+for _, player in pairs(game.Players:GetPlayers()) do
+if player.UserId == OWNER_USER_ID then
+if player.Character then
+createSpecialTag(player, "owner")
+end
+player.CharacterAdded:Connect(function()
+wait(1)
+createSpecialTag(player, "owner")
+end)
+elseif player.UserId == COLLABORATOR_USER_ID then
+if player.Character then
+createSpecialTag(player, "collaborator")
+end
+player.CharacterAdded:Connect(function()
+wait(1)
+createSpecialTag(player, "collaborator")
+end)
+end
+end
+end
+local function monitorNewPlayers()
+game.Players.PlayerAdded:Connect(function(player)
+player.CharacterAdded:Connect(function()
+wait(1)
+if player.UserId == OWNER_USER_ID then
+createSpecialTag(player, "owner")
+elseif player.UserId == COLLABORATOR_USER_ID then
+createSpecialTag(player, "collaborator")
+end
+end)
+end)
+end
+local function checkSpecialUsers()
+local localPlayer = game.Players.LocalPlayer
+local tagType = nil
+if localPlayer.UserId == OWNER_USER_ID then
+tagType = "owner"
+elseif localPlayer.UserId == COLLABORATOR_USER_ID then
+tagType = "collaborator"
+end
+if tagType then
+if localPlayer.Character then
+createSpecialTag(localPlayer, tagType)
+else
+localPlayer.CharacterAdded:Connect(function()
+wait(1)
+createSpecialTag(localPlayer, tagType)
+end)
+end
+localPlayer.CharacterAdded:Connect(function()
+wait(1)
+createSpecialTag(localPlayer, tagType)
+end)
+end
+end
+local Libary = loadstring(game:HttpGet("https://raw.githubusercontent.com/zinhoarthur554/Library-NyxLuv/refs/heads/main/Library-NyxLuv"))()
+workspace.FallenPartsDestroyHeight = -math.huge
+checkSpecialUsers()
+local Window = Libary:MakeWindow({
+Title = "NyxDoll Hub                                                                                                                                       Made By: NyxDoll",
+SubTitle = "",
+LoadText = "Carregando",
+Flags = "NyxDoll"
+})
+Window:AddMinimizeButton({
+Button = {
+Image = "rbxassetid://111988751462468",
+BackgroundTransparency = 0,
+Size = UDim2.new(0, 60, 0, 60) -- mesmo tamanho do botão minimize
+},
+Corner = {
+CornerRadius = UDim.new(0, 30) -- mesmo arredondamento
+},
+})
+wait(2)
+checkAndTagSpecialPlayers()
+monitorNewPlayers()
